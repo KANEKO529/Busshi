@@ -1,23 +1,40 @@
 class UserProductsController < ApplicationController
-  # before_action :authenticate_user!
-
   def index
     @user_products = UserProduct.all
+
+    # 年齢層フィルタリング
+    if params[:age_group].present?
+      age_range = case params[:age_group]
+                  when 'teens'
+                    10..19
+                  when 'twenties'
+                    20..29
+                  when 'thirties'
+                    30..39
+                  when 'forties'
+                    40..49
+                  when 'fifties'
+                    50..59
+                  when 'sixties_and_above'
+                    60..Float::INFINITY
+                  else
+                    0..Float::INFINITY
+                  end
+
+      @user_products = @user_products.where(age: age_range)
+    end
+
     render json: @user_products
   end
 
   def create
-    # 新しいuser_productオブジェクトを生成
     @user_product = UserProduct.new(user_product_params)
 
-    # 既に同じユーザーが同じ商品に対して欲しさレベルを設定しているかをチェック
     existing_product = UserProduct.find_by(user_id: @user_product.user_id, product_name: @user_product.product_name)
 
     if existing_product
-      # 既に設定されている場合はエラーメッセージを返す
       render json: { errors: ['既にこの商品には欲しさレベルが設定されています。'] }, status: :unprocessable_entity
     else
-      # まだ設定されていない場合は保存する
       if @user_product.save
         render json: @user_product, status: :created
       else

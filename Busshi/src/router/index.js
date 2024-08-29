@@ -8,9 +8,9 @@ import Supporter from '@/components/Supporter.vue';
 
 const routes = [
   { path: '/', component: SelectRole,
-    meta: { showNavigation: false } }, 
+}, 
   { path: '/products/search', component: Victim,
-    meta: { showNavigation: true } },
+},
   { path: '/register', component: UserInput },
   { path: '/users/sign_in', component: SignIn },
   { path: '/register/success', component: SignupSuccess },
