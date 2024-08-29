@@ -104,7 +104,7 @@ export default {
   max-width: 500px;
   width: 80%;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: hsl(33, 100%, 96%);
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }

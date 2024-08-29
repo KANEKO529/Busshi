@@ -1,4 +1,6 @@
 class UserProductsController < ApplicationController
+  before_action :set_user_product, only: [:destroy]
+
   def index
     @user_products = UserProduct.all
 
@@ -44,7 +46,18 @@ class UserProductsController < ApplicationController
     end
   end
 
+  def destroy
+    @user_product.destroy
+    head :no_content
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "User product not found" }, status: :not_found
+  end
+
   private
+
+  def set_user_product
+    @user_product = UserProduct.find(params[:id])
+  end
 
   def user_product_params
     params.require(:user_product).permit(:user_id, :product_name, :item_url, :image_url, :price, :review_score, :desire_level, :gender, :age, :prefecture, :city)

@@ -1,75 +1,75 @@
 <template>
   <div>
-    <h1>User Products</h1>
+    <nav class="navbar">
+      <div class="app-name">
+        <img src="@/assets/logo.png" alt="AppName" class="app-logo" />
+      </div>
+      <div class="content-container">
+        <form @submit.prevent="applyFilters" class="filter-form">
+          <div class="filter-group">
+            <label for="gender">Sex</label>
+            <select id="gender" v-model="filters.gender">
+              <option value="">All</option>
+              <option value="male">Male</option>
+              <option value="female">FeMale</option>
+              <option value="other">Others</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="ageGroup">Age</label>
+            <select id="ageGroup" v-model="filters.ageGroup">
+              <option value="">All</option>
+              <option value="teens">10s</option>
+              <option value="twenties">20s</option>
+              <option value="thirties">30s</option>
+              <option value="forties">40s</option>
+              <option value="fifties">50s</option>
+              <option value="sixties_and_above">More 60s</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="prefecture">Prefecture</label>
+            <select id="prefecture" v-model="filters.prefecture" @change="fetchCities">
+              <option v-for="(prefecture, index) in prefectures" :key="index" :value="prefecture">
+                {{ prefecture }}
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="city">City</label>
+            <select id="city" v-model="filters.city" v-if="cities.length > 0">
+              <option v-for="(city, index) in cities" :key="index" :value="city">
+                {{ city }}
+              </option>
+            </select>
+          </div>
+        </form>
+      </div>
+    </nav>
 
     <div class="auth-info">
       <router-link to="/products/search">
-        <button class="auth-button">To Victim</button>
+        <button class="auth-button1">To Victim</button>
       </router-link>
     </div>
 
-    <div class="content-container">
-      <form @submit.prevent="applyFilters">
-        <div>
-  <label for="gender">性別:</label>
-  <select id="gender" v-model="filters.gender">  <!-- id="gender" を追加 -->
-    <option value="">全て</option>
-    <option value="male">男性</option>
-    <option value="female">女性</option>
-    <option value="other">その他</option>
-  </select>
-</div>
-
-<div>
-  <label for="ageGroup">年齢層:</label>
-  <select id="ageGroup" v-model="filters.ageGroup">  <!-- id="ageGroup" を追加 -->
-    <option value="">全て</option>
-    <option value="teens">10代</option>
-    <option value="twenties">20代</option>
-    <option value="thirties">30代</option>
-    <option value="forties">40代</option>
-    <option value="fifties">50代</option>
-    <option value="sixties_and_above">60代以上</option>
-  </select>
-</div>
-
-<div>
-  <label for="prefecture">都道府県:</label>
-  <select id="prefecture" v-model="filters.prefecture" @change="fetchCities">  <!-- id="prefecture" を追加 -->
-    <option v-for="(prefecture, index) in prefectures" :key="index" :value="prefecture">
-      {{ prefecture }}
-    </option>
-  </select>
-</div>
-
-<div>
-  <label for="city">市区町村:</label>
-  <select id="city" v-model="filters.city" v-if="cities.length > 0">  <!-- id="city" を追加 -->
-    <option v-for="(city, index) in cities" :key="index" :value="city">
-      {{ city }}
-    </option>
-  </select>
-</div>
-
-      </form>
-
-      <ul>
-        <li v-for="(item, index) in sortedProductCounts" :key="item.name" style="margin-bottom: 20px;">
+    <div>
+      <ul class="product-list">
+        <li v-for="(item, index) in sortedProductCounts" :key="item.name" class="product-item">
           <p :style="rankStyle">{{ index + 1 }} </p>
-          <img :src="item.image_url" alt="Product Image" style="max-width: 300px; margin-bottom: 10px;" />
-          <br>
-          <p>{{ item.count }} 回お気に入りに入りました．</p>
+          <img :src="item.image_url" alt="Product Image" class="product-image" />
+          <p>{{ item.count }} people favorite．</p>
           <p>{{ item.name }}</p>
-          <p>今すぐほしい！！ {{ item.level3_count }} 人</p>
-          <p>ほしいかも {{ item.level2_count }} 人</p>
-
-          <p>あったらうれしい {{ item.level1_count }} 人</p>
+          <p>Must Have!! : {{ item.level3_count }} people</p>
+          <p>Would Like : {{ item.level2_count }} people</p>
+          <p>Nice  to Have : {{ item.level1_count }} people</p>
           <a :href="item.item_url" target="_blank">
-            <button style="padding: 6px 15px; font-size: 10px;">商品ページを見る</button>
+            <button class="product-button">See the product Page</button>
           </a>
-          <p>
-            ----------------------
-          </p>
+          <hr>
         </li>
       </ul>
     </div>
@@ -77,6 +77,8 @@
 </template>
 
 <script>
+/* スクリプト部分は変わりません */
+
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 
@@ -89,11 +91,15 @@ setup() {
       prefecture: '',
       city: ''
     });
+
     const rankStyle = {
-      fontSize: '24px',
+      fontSize: '40px',
       fontWeight: 'bold',
-      color: 'red'
+      color: 'red',
+      fontFamily: '"Arial", sans-serif'
+ // フォントファミリーを指定
     };
+    
     const prefectures = ref([]);
     const cities = ref([]);
 
@@ -111,7 +117,7 @@ setup() {
       if (selectedPrefecture && selectedPrefecture !== '全て') {
         try {
           const response = await axios.get(`https://geoapi.heartrails.com/api/json?method=getCities&prefecture=${selectedPrefecture}`);
-          cities.value = ['全て', ...response.data.response.location.map(location => location.city)];
+          cities.value = ['全て', ...response.data.response.location.map(location => location.city)]
         } catch (error) {
           console.error('Failed to fetch cities:', error);
         }
@@ -228,41 +234,119 @@ const filteredProducts = computed(() => {
     };
   }
 };
+
 </script>
 
-<style>
-/* フィルタリングフォームを上部に固定 */
-.filter-form {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: white;
+<style scoped>
+/* ナビゲーションバーのスタイル */
+.navbar {
+  height: 125px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #ccc;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* アプリ名とロゴのスタイル */
+.app-name {
+  width: 125px;
+  height: 125px;
+  overflow: hidden;
+}
+
+.app-logo {
   padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* コンテンツコンテナのスタイル */
 .content-container {
   display: flex;
   justify-content: center;
-  margin-top: 150px; /* フィルタリングフォームの高さを考慮して余白を設定 */
+  /* align-items: center; */
+  /* width: 100%; */
+  /* margin: 10px; */
+  padding: 10px;
 }
 
-/* フィルタリング結果のリストのスタイル */
+/* フィルタフォームのスタイル */
+.filter-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2列レイアウト */
+  gap: 5px; /* 各フィルター間の隙間 */
+  width: 100%; /* 必要に応じて幅を調整 */
+  max-width: 600px; /* コンテナの最大幅を指定 */
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  /* width: 50px; */
+  /* height: 50px; */
+}
+
+.filter-group label {
+  font-weight: bold;
+  /* margin-bottom: 5px; */
+}
+
+.filter-group select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* 認証情報とボタンのスタイル */
+.auth-info {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.auth-button {
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.auth-button1 {
+  /* margin-left: 10px; */
+  padding: 6px 12px;
+  font-size: 14px;
+  background-color: #ffb26a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.auth-button:hover {
+  background-color: #0056b3;
+}
+
+/* 商品リストのスタイル */
 .product-list {
-  width: 430px; /* 横幅を430pxに設定 */
-  list-style-type: none;
+  width: 80%;
+  margin: 20px auto;
   padding: 0;
+  list-style-type: none;
 }
 
 .product-item {
   margin-bottom: 20px;
   padding: 15px;
-  background-color: #f8f9fa; /* 背景色を追加 */
-  border-radius: 8px; /* 角を丸くして見やすくする */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影を追加して浮き上がらせる */
+  background-color: hsl(33, 100%, 96%);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .product-image {
@@ -272,7 +356,7 @@ const filteredProducts = computed(() => {
 
 .product-button {
   padding: 6px 15px;
-  font-size: 10px;
+  font-size: 14px;
   background-color: #007bff;
   color: white;
   border: none;
@@ -283,4 +367,11 @@ const filteredProducts = computed(() => {
 .product-button:hover {
   background-color: #0056b3;
 }
+
+hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
+
 </style>
