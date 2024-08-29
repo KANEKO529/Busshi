@@ -4,17 +4,18 @@ import UserInput from '@/components/UserInput.vue';
 import SignIn from '@/components/SignIn.vue';
 import SelectRole from '@/components/SelectRole.vue';  
 import SignupSuccess from '@/components/SignupSuccess.vue';  
-import Suppoter from '@/components/Suppoter.vue';
-import Mypage from '@/components/Mypage.vue';
+import Supporter from '@/components/Supporter.vue';
 
 const routes = [
-  { path: '/', component: SelectRole }, 
-  { path: '/products/search', component: Victim },
+  { path: '/', component: SelectRole,
+    meta: { showNavigation: false } }, 
+  { path: '/products/search', component: Victim,
+    meta: { showNavigation: true } },
   { path: '/register', component: UserInput },
   { path: '/users/sign_in', component: SignIn },
   { path: '/register/success', component: SignupSuccess },
-  { path: '/role2', component: Suppoter},
-  { path: '/mypage', component: Mypage}
+  { path: '/role2', component: Supporter,
+    meta: { showNavigation: true }}
 ];
 
 const router = createRouter({

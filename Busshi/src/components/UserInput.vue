@@ -44,8 +44,8 @@
         <label for="prefecture">都道府県:</label>
         <select id="prefecture" v-model="user.prefecture" @change="fetchCities">
           <option v-for="(prefecture, index) in prefectures" :key="index" :value="prefecture">
-  {{ prefecture }}
-</option>
+            {{ prefecture }}
+          </option>
         </select>
       </div>
 
