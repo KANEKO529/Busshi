@@ -200,10 +200,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
-<<<<<<< HEAD
   arm64-darwin-23
-=======
->>>>>>> 17c56df7176705ab94145381293f3dcd918bb9a0
   x64-mingw-ucrt
 
 DEPENDENCIES
