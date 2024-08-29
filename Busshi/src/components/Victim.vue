@@ -20,6 +20,7 @@
         <p>{{ product.itemName }}</p>
         <p>価格: {{ product.itemPrice }}円</p>
         <p>レビュー: {{ product.reviewAverage }}/5</p>
+        <p>itemcode: {{ product.itemCode }}</p>
         <a :href="product.itemUrl" target="_blank">商品ページへ</a>
 
         <div class="desire-level-buttons">
@@ -81,7 +82,7 @@ export default {
 
       try {
         const response = await axios.post('http://localhost:3000/user_products', {
-      user_product: {
+        user_product: {
         user_id: this.currentUser.id,
         product_name: product.itemName,
         item_url: product.itemUrl,
@@ -92,7 +93,8 @@ export default {
         gender: this.currentUser.gender,
         age: this.currentUser.age,
         prefecture: this.currentUser.prefecture,
-        city: this.currentUser.city
+        city: this.currentUser.city,
+        item_code: product.itemCode
       }
 });
 
@@ -108,7 +110,8 @@ export default {
         gender: this.currentUser.gender,
         age: this.currentUser.age,
         prefecture: this.currentUser.prefecture,
-        city: this.currentUser.city
+        city: this.currentUser.city,
+        item_code: product.itemCode
       });
     console.log('送信するデータ:', {
         user_product: {
@@ -122,7 +125,8 @@ export default {
         gender: this.currentUser.gender,
         age: this.currentUser.age,
         prefecture: this.currentUser.prefecture,
-        city: this.currentUser.city
+        city: this.currentUser.city,
+        item_code: product.itemCode
   }
 });
     alert('欲しさレベルが保存されました');

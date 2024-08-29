@@ -1,5 +1,5 @@
 class UserProductsController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
 
   def create
     @user_product = UserProduct.new(user_product_params)
@@ -15,6 +15,6 @@ class UserProductsController < ApplicationController
   private
 
   def user_product_params
-    params.require(:user_product).permit(:user_id, :product_name, :item_url, :image_url, :price, :review_score, :desire_level, :gender, :age, :prefecture, :city)
+    params.require(:user_product).permit(:user_id, :product_name, :item_url, :image_url, :price, :review_score, :desire_level, :gender, :age, :prefecture, :city, :item_code)
   end
 end

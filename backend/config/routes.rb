@@ -14,5 +14,6 @@ Rails.application.routes.draw do
   # root "articles#index"
   get '/api/test', to: 'application#test' # ここを追加
   get 'products/search', to: 'products#search'
+  get 'rankings', to: 'rankings#index'
   # post 'users', to: 'users#create'
 end
