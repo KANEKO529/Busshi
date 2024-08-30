@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <router-view />
-
     <!-- <ApiTest /> -->
     <!-- <Victim /> -->
     <!-- <UserInput /> -->
@@ -17,7 +16,6 @@ import SelectRole from './components/SelectRole.vue'; // 追加
 import SignupSuccess from './components/SignupSuccess.vue';  // 追加
 
 export default {
-
   name: 'App',
   components: {
     ApiTest,
@@ -25,7 +23,7 @@ export default {
     UserInput,
     SignIn,
     SelectRole, // 追加
-    SignupSuccess, // 追加
+    SignupSuccess // 追加
   }
 }
 </script>

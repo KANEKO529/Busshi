@@ -11,11 +11,11 @@
       </div>
     </nav>
 
+
     <div>
       <div v-if="isAuthenticated" class="auth-info">
         <div>Welcome, {{ currentUser.email }}</div>
         <div class="button2">
-          <button @click="toggleView" class="auth-button1">Toggle View</button>
           <button @click="logout" class="auth-button1">Logout</button>
           <router-link to="/role2">
             <button class="auth-button1">To Supporter</button>
@@ -24,7 +24,6 @@
       </div>
 
       <div v-else class="auth-info">
-        <button @click="toggleView" class="auth-button1">Toggle View</button>
         <button @click="$router.push('/users/sign_in')" class="auth-button1">Login</button>
         <router-link to="/role2">
           <button class="auth-button1">To Supporter</button>
@@ -32,64 +31,23 @@
       </div>
     </div>
 
-    <div>
-      <ul v-if="products.length > 0" :class="['product-list', { 'grid-view': isGridView }]">
-        <li v-for="product in products" :key="product.itemCode" :class="['product-item', { 'grid-item': isGridView }]">
-          <img :src="product.mediumImageUrls[0]" alt="商品画像" class="product-image" />
-          <p>{{ product.itemName }}</p>
-          <p>Price: {{ product.itemPrice }} yen</p>
+
+
+    <ul v-if="products.length > 0" class="product-list">
+      <li v-for="product in products" :key="product.itemCode" class="product-item">
+        <img :src="product.mediumImageUrls[0]" alt="商品画像" class="product-image" />
+        <p>{{ product.itemName }}</p>
+        <p>Price: {{ product.itemPrice }} yen</p>
           <p>Review: {{ product.reviewAverage }}/5</p>
           <a :href="product.itemUrl" target="_blank">To Product Page</a>
 
-          <div class="desire-level-buttons">
-            <button
-              v-if="isProductAlreadyRated(product, 3)"
-              @click="removeDesireLevel(product)"
-              class="rated-button"
-            >
-              Remove Must have!!
-            </button>
-            <button
-              v-else
-              @click="saveDesireLevel(product, 3)"
-              :class="{'rated-button': isProductAlreadyRated(product, 3)}"
-            >
-              Must have!!{{ isProductAlreadyRated(product, 3) ? ' (Already set)' : '' }}
-            </button>
-
-            <button
-              v-if="isProductAlreadyRated(product, 2)"
-              @click="removeDesireLevel(product)"
-              class="rated-button"
-            >
-              Remove Would Like
-            </button>
-            <button
-              v-else
-              @click="saveDesireLevel(product, 2)"
-              :class="{'rated-button': isProductAlreadyRated(product, 2)}"
-            >
-              Would Like{{ isProductAlreadyRated(product, 2) ? ' (Already set)' : '' }}
-            </button>
-
-            <button
-              v-if="isProductAlreadyRated(product, 1)"
-              @click="removeDesireLevel(product)"
-              class="rated-button"
-            >
-              Remove Nice to Have
-            </button>
-            <button
-              v-else
-              @click="saveDesireLevel(product, 1)"
-              :class="{'rated-button': isProductAlreadyRated(product, 1)}"
-            >
-              Nice to Have{{ isProductAlreadyRated(product, 1) ? ' (Already set)' : '' }}
-            </button>
-          </div>
-        </li>
-      </ul>
-    </div>
+        <div class="desire-level-buttons">
+          <button @click="saveDesireLevel(product, 3)" class="desire-button">Must Have!!</button>
+          <button @click="saveDesireLevel(product, 2)" class="desire-button">Would Like</button>
+          <button @click="saveDesireLevel(product, 1)" class="desire-button">Nice to Have</button>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -101,121 +59,72 @@ export default {
   data() {
     return {
       keyword: '',
-      products: [],
-      ratedProducts: [],
-      isGridView: false, // 横並び表示のフラグを追加
+      products: []
     };
   },
   computed: {
     ...mapGetters(['isAuthenticated', 'currentUser'])
   },
   mounted() {
-    if (this.isAuthenticated) {
-      this.fetchRatedProducts();
-    }
+    console.log('現在のユーザー:', this.currentUser); // ユーザー情報が正しく表示されるはずです
+    console.log('認証状態:', this.isAuthenticated); // 認証状態が正しいか確認
   },
   methods: {
-    toggleView() {
-      this.isGridView = !this.isGridView;
-    },
     async searchProducts() {
       try {
         const response = await axios.get('http://localhost:3000/products/search', {
-          params: { keyword: this.keyword }
+          params: {
+            keyword: this.keyword
+          }
         });
+        console.log(response.data);  // レスポンスを確認
         this.products = response.data;
       } catch (error) {
         console.error('APIリクエストに失敗しました:', error);
       }
     },
-    async fetchRatedProducts() {
-  try {
-    const response = await axios.get('http://localhost:3000/user_products', {
-      params: { user_id: this.currentUser.id }
-    });
-    // Make sure to store the `id` from the `UserProduct`
-    this.ratedProducts = response.data.map(product => ({
-      id: product.id,  // Ensure id is stored
-      productName: product.product_name,
-      desireLevel: product.desire_level
-    }));
-  } catch (error) {
-    console.error('既に評価された商品の取得に失敗しました:', error);
-  }
-},
 
-    isProductAlreadyRated(product, level) {
-      return this.ratedProducts.some(
-        rated => rated.productName === product.itemName && rated.desireLevel === level
-      );
+    logout() {
+      this.$store.dispatch('logout');
+      this.$router.push('/products/search');
     },
+
     async saveDesireLevel(product, level) {
-      if (!this.isAuthenticated) {
-        alert('ログインしてください');
+      console.log('現在のユーザー:', this.currentUser); // 追加：ユーザー情報をログに表示
+      console.log('保存する商品データ:', product); // 商品データをログに表示
+
+      if (!this.currentUser) {
+        console.error('ユーザーがログインしていません。');
         return;
       }
 
       try {
-        await axios.post('http://localhost:3000/user_products', {
-          user_product: {
-            user_id: this.currentUser.id,
-            product_name: product.itemName,
-            item_url: product.itemUrl,
-            image_url: product.mediumImageUrls[0],
-            price: product.itemPrice,
-            review_score: product.reviewAverage,
-            desire_level: level,
-            gender: this.currentUser.gender,
-            age: this.currentUser.age,
-            prefecture: this.currentUser.prefecture,
-            city: this.currentUser.city
-          }
-        });
-
-        alert('欲しさレベルが保存されました');
-        this.fetchRatedProducts(); // 保存後に評価された商品リストを更新
-      } catch (error) {
-        if (error.response && error.response.status === 422) {
-          alert('既にこの商品には欲しさレベルが設定されています。');
-        } else {
-          console.error('データ保存エラー:', error.response ? error.response.data : error.message);
-          alert('データ保存に失敗しました');
-        }
+        const response = await axios.post('http://localhost:3000/user_products', {
+      user_product: {
+        user_id: this.currentUser.id,
+        product_name: product.itemName,
+        item_url: product.itemUrl,
+        image_url: product.mediumImageUrls[0],
+        price: product.itemPrice,
+        review_score: product.reviewAverage,
+        desire_level: level,
+        gender: this.currentUser.gender,
+        age: this.currentUser.age,
+        prefecture: this.currentUser.prefecture,
+        city: this.currentUser.city
       }
-    },
-    async removeDesireLevel(product) {
-  if (!this.isAuthenticated) {
-    alert('ログインしてください');
-    return;
-  }
+});
 
-  // Find the UserProduct that matches the current product and desire level
-  const ratedProduct = this.ratedProducts.find(rated => rated.productName === product.itemName);
-
-  if (!ratedProduct) {
-    alert('対象の商品が見つかりませんでした。');
-    return;
-  }
-
-  try {
-    await axios.delete(`http://localhost:3000/user_products/${ratedProduct.id}`);
-    alert('欲しさレベルが削除されました');
-    this.fetchRatedProducts();  // 更新された評価された商品リストを再取得
+    console.log('欲しいBusshiが保存されました:', response.data);
+    alert('欲しいBusshiが保存されました');
   } catch (error) {
-    console.error('データ削除エラー:', error.response ? error.response.data : error.message);
-    alert('データ削除に失敗しました');
+    console.error('Error saving desire level:', error.response ? error.response.data : error.message);
+    alert('データ保存に失敗しました');
   }
 }
-
-,
-    logout() {
-      this.$store.dispatch('logout');
-      this.$router.push('/products/search');
-    }
   }
 };
 </script>
-
 
 <style scoped>
 

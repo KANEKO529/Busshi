@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   resources :users, only: [:create]
   # コントローラーの create アクションを使えるようにする
-  resources :user_products, only: [:create, :index, :destroy]  # indexアクションを追加
+  resources :user_products, only: [:create, :index]  # indexアクションを追加
   get 'users/new'
   get 'users/create'
   get 'users/show'

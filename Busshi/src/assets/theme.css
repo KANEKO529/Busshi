@@ -1,0 +1,21 @@
+
+
+/* ダークテーマ用のスタイル */
+@media (prefers-color-scheme: dark) {
+    body {
+      background-color: black;
+      color: black;
+      
+    }
+    /* 他の要素やクラスのスタイルもここに定義できます */
+  }
+  
+  /* ライトテーマ用のスタイル（デフォルト） */
+  @media (prefers-color-scheme: light) {
+    body {
+      background-color: white;
+      color: white;
+    }
+    /* 他の要素やクラスのスタイルもここに定義できます */
+  }
+  

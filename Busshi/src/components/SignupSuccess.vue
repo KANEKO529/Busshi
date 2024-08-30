@@ -4,7 +4,7 @@
       <img src="@/assets/p1-victimbutton1_cut.png" alt="登録アイコン" />
     </div>
     <div class="message">
-      登録しました！
+      Successed!!
     </div>
     <div class="button-container">
       <button @click="navigateToRole1">{{ buttonText1 }}</button>
@@ -13,12 +13,12 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'; // Vue Routerをインポート
+import { useRouter } from 'vue-router';
 const router = useRouter();
-const buttonText1 = 'サインインする';
+const buttonText1 = 'Sign in';
 
 const navigateToRole1 = () => {
-  router.push('/users/sign_in'); // サインインのページに遷移
+  router.push('/users/sign_in');
 };
 </script>
 
@@ -30,6 +30,8 @@ const navigateToRole1 = () => {
   justify-content: center;
   height: 100vh;
   text-align: center;
+  padding: 20px; /* スマホ画面での余白を確保 */
+  box-sizing: border-box;
 }
 
 .icon {
@@ -37,28 +39,29 @@ const navigateToRole1 = () => {
 }
 
 .icon img {
-  width: 150px; /* 画像のサイズを調整 */
+  width: 40vw; /* 画面幅に応じて画像サイズを調整 */
   height: auto;
-  border-radius: 50%; /* 必要なら角丸を調整 */
+  border-radius: 50%;
 }
 
 .message {
-  font-size: 24px;
+  font-size: 6vw; /* 画面幅に基づいたフォントサイズ */
   margin-bottom: 30px;
 }
 
 .button-container {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
+  padding: 15px 30px;
+  font-size: 4vw; /* フォントサイズを画面幅に合わせて調整 */
   background-color: #000;
   color: #fff;
   border: none;
   border-radius: 25px;
+  width: 80%; /* ボタン幅を画面幅に対して設定 */
 }
 </style>

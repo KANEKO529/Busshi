@@ -55,7 +55,7 @@
               {{ city }}
             </option>
           </select>
-          <input id="city" type="text" v-model="user.city">
+          <!-- <input id="city" type="text" v-model="user.city"> -->
         </div>
 
         <button type="submit" class="register-button">Sigh up</button>

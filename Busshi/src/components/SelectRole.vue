@@ -20,7 +20,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 const router = useRouter();
-const buttonText3 = 'Next';
+const buttonText3 = 'Sign up';
 
 const navigateToRole1 = () => {
   router.push('/users/sign_in');
