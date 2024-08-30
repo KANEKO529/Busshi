@@ -4,7 +4,7 @@
       <img src="@/assets/Weixin Image_20240829090829.png" alt="AppName" class="app-logo" />
     </div>
     <div class="register-container">
-      <h1>User Information</h1>
+      <h1>Sign up</h1>
 
       <!-- エラーメッセージを表示 -->
       <div v-if="errors.length" class="error-messages">
@@ -58,7 +58,7 @@
           <!-- <input id="city" type="text" v-model="user.city"> -->
         </div>
 
-        <button type="submit" class="register-button">Sigh up</button>
+        <button type="submit" class="register-button">Sign up</button>
       </form>
     </div>
   </div>
@@ -164,8 +164,7 @@ export default {
 
 /* フォームのコンテナ */
 .register-container {
-  max-width: 380px;
-  width: 80%;
+  width: 100%;
   padding: 20px;
   background-color: hsl(34, 100%, 94%);
   border-radius: 10px;

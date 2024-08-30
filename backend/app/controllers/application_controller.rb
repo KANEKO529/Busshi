@@ -8,7 +8,7 @@ class ApplicationController < ActionController::API
     response = HTTParty.get("https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706",
                             query: {
                               format: 'json',
-                              applicationId: ENV['RAKUTEN_API_KEY'],
+                              applicationId: ENV['RAKUTEN_APP_ID'],
                               keyword: query
                             })
     render json: response.parsed_response

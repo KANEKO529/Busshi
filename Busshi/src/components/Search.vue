@@ -1,34 +1,12 @@
 <template>
   <div>
-    <nav class="navbar">
-      <div class="app-name">
-        <img src="@/assets/logo.png" alt="AppName" class="app-logo" />
-      </div>
-
-      <div class="search-bar">
+    <div class="search-bar">
         <input v-model="keyword" placeholder="keyword" />
         <button @click="searchProducts"><img src="@/assets/symbol064.png" alt="AppName" class="search" /></button>
       </div>
-    </nav>
-
 
     <div>
-      <div v-if="isAuthenticated" class="auth-info">
-        <div>Welcome, {{ currentUser.email }}</div>
-        <div class="button2">
-          <button @click="logout" class="auth-button1">Logout</button>
-          <router-link to="/role2">
-            <button class="auth-button1">To Supporter</button>
-          </router-link>
-        </div>
-      </div>
-
-      <div v-else class="auth-info">
-        <button @click="$router.push('/users/sign_in')" class="auth-button1">Login</button>
-        <router-link to="/role2">
-          <button class="auth-button1">To Supporter</button>
-        </router-link>
-      </div>
+  
     </div>
 
 
@@ -53,13 +31,13 @@
 
 <script>
 import axios from 'axios';
-import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';//mapgetters用
 
 export default {
   data() {
     return {
       keyword: '',
-      products: []
+      products: []//配列
     };
   },
   computed: {
@@ -86,12 +64,16 @@ export default {
 
     logout() {
       this.$store.dispatch('logout');
-      this.$router.push('/products/search');
-    },
+      this.$router.push('/');
+    }
+    
+    
+    
+    ,
 
     async saveDesireLevel(product, level) {
       console.log('現在のユーザー:', this.currentUser); // 追加：ユーザー情報をログに表示
-      console.log('保存する商品データ:', product); // 商品データをログに表示
+      console.log('保存する商品データ:', product); // 商品データをログに表示 productは引数。
 
       if (!this.currentUser) {
         console.error('ユーザーがログインしていません。');
@@ -100,27 +82,27 @@ export default {
 
       try {
         const response = await axios.post('http://localhost:3000/user_products', {
-      user_product: {
-        user_id: this.currentUser.id,
-        product_name: product.itemName,
-        item_url: product.itemUrl,
-        image_url: product.mediumImageUrls[0],
-        price: product.itemPrice,
-        review_score: product.reviewAverage,
-        desire_level: level,
-        gender: this.currentUser.gender,
-        age: this.currentUser.age,
-        prefecture: this.currentUser.prefecture,
-        city: this.currentUser.city
-      }
-});
+          user_product: {
+            user_id: this.currentUser.id,
+            product_name: product.itemName,
+            item_url: product.itemUrl,
+            image_url: product.mediumImageUrls[0],
+            price: product.itemPrice,
+            review_score: product.reviewAverage,
+            desire_level: level,
+            gender: this.currentUser.gender,
+            age: this.currentUser.age,
+            prefecture: this.currentUser.prefecture,
+            city: this.currentUser.city
+          }
+        });
 
-    console.log('欲しいBusshiが保存されました:', response.data);
-    alert('欲しいBusshiが保存されました');
-  } catch (error) {
-    console.error('Error saving desire level:', error.response ? error.response.data : error.message);
-    alert('データ保存に失敗しました');
-  }
+        console.log('欲しいBusshiが保存されました:', response.data);
+        alert('欲しいBusshiが保存されました');
+      } catch (error) {
+        console.error('Error saving desire level:', error.response ? error.response.data : error.message);
+        alert('データ保存に失敗しました');
+    }
 }
   }
 };

@@ -1,7 +1,7 @@
 import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router'
+import router from './router/router.js'
 import store from './store'  // Vuex ストアのインポート
 // import './assets/theme.css'; // テーマの変更に対応させるため（必要ない場合はコメントアウト）
 

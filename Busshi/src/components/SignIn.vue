@@ -22,6 +22,7 @@
           <input type="password" id="password" v-model="password"
         </div>
         <button type="submit" class="signin-button">Sign in</button>
+        <p>アカウントをお持ちでない方は<router-link to="/signup">こちら</router-link></p>
       </form>
     </div>
   </div>
@@ -56,7 +57,7 @@ export default {
         // ユーザー情報をVuexに保存
         if (response.data.user) {
           store.dispatch('login', response.data.user);
-          router.push('/products/search'); // リダイレクト先
+          router.push('/'); // リダイレクト先
         } else {
           console.error('ユーザーデータが取得できませんでした:', response.data);
           errors.value.push('ユーザーデータが取得できませんでした。');
@@ -101,8 +102,8 @@ export default {
 /* サインインフォームのスタイル */
 .signin-container {
 
-  max-width: 500px;
-  width: 80%;
+  max-width: 100%;
+  width: 100%;
   padding: 20px;
   background-color: hsl(33, 100%, 96%);
   border-radius: 10px;

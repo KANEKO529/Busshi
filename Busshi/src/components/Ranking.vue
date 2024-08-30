@@ -1,15 +1,11 @@
 <template>
   <div>
-    <nav class="navbar">
-      <div class="app-name">
-        <img src="@/assets/logo.png" alt="AppName" class="app-logo" />
-      </div>
-    </nav>
-
     <div class="content-wrapper">
       <div class="content-container">
         <form @submit.prevent="applyFilters" class="filter-form">
+
           <div class="filter-group">
+
             <label for="gender">Sex</label>
             <select id="gender" v-model="filters.gender">
               <option value="">All</option>
@@ -17,28 +13,24 @@
               <option value="female">Female</option>
               <option value="other">Others</option>
             </select>
-          </div>
 
-          <div class="filter-group">
             <label for="age">Age</label>
             <input id="age" type="number" v-model="filters.age" placeholder="20">
-          </div>
 
-          <div class="filter-group">
             <label for="prefecture">Prefecture</label>
             <select id="prefecture" v-model="filters.prefecture" @change="fetchCities(filters.prefecture)">
               <option value="">All</option>
               <option v-for="prefecture in prefectures" :key="prefecture" :value="prefecture">{{ prefecture }}</option>
             </select>
-          </div>
 
-          <div class="filter-group">
             <label for="city">City</label>
             <select id="city" v-model="filters.city">
               <option value="">All</option>
               <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
             </select>
+
           </div>
+
         </form>
       </div>
 
@@ -205,7 +197,7 @@ export default {
 
 /* フィルタフォームのスタイル */
 .content-container {
-  width: 85%;
+  width: 95%;
   max-width: 800px;
   margin-bottom: 20px;
 }
@@ -223,7 +215,8 @@ export default {
 
 .filter-group {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  /* flex-direction: column; */
 }
 
 .filter-group label {
@@ -236,6 +229,7 @@ export default {
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #ccc;
+  width: 50px;
 }
 
 /* 商品リストのスタイル */
