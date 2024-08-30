@@ -61,7 +61,8 @@
         <li v-for="(item, index) in sortedProductCounts" :key="item.name" class="product-item">
           <p :style="rankStyle">{{ index + 1 }} </p>
           <img :src="item.image_url" alt="Product Image" class="product-image" />
-          <p>{{ item.count }} people favorite．</p>
+          <!-- <p>{{ item.count }} people favorite．</p> -->
+
           <p>{{ item.name }}</p>
           <p>Must Have!! : {{ item.level3_count }} people</p>
           <p>Would Like : {{ item.level2_count }} people</p>
@@ -77,17 +78,15 @@
 </template>
 
 <script>
-/* スクリプト部分は変わりません */
-
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 
 export default {
-setup() {
+  setup() {
     const products = ref([]);
     const filters = ref({
       gender: '',
-      ageGroup: '', // 年齢層フィルタを追加
+      ageGroup: '',
       prefecture: '',
       city: ''
     });
@@ -97,9 +96,8 @@ setup() {
       fontWeight: 'bold',
       color: 'red',
       fontFamily: '"Arial", sans-serif'
- // フォントファミリーを指定
     };
-    
+
     const prefectures = ref([]);
     const cities = ref([]);
 
@@ -117,7 +115,7 @@ setup() {
       if (selectedPrefecture && selectedPrefecture !== '全て') {
         try {
           const response = await axios.get(`https://geoapi.heartrails.com/api/json?method=getCities&prefecture=${selectedPrefecture}`);
-          cities.value = ['全て', ...response.data.response.location.map(location => location.city)]
+          cities.value = ['全て', ...response.data.response.location.map(location => location.city)];
         } catch (error) {
           console.error('Failed to fetch cities:', error);
         }
@@ -126,101 +124,78 @@ setup() {
       }
     };
 
-    const fetchProducts = async () => {
-  console.log('Gender filter:', filters.value.gender); // 性別フィルタの確認
-  console.log('Age Group filter:', filters.value.ageGroup); // 年齢層フィルタの確認
-  console.log('Prefecture filter:', filters.value.prefecture); // 都道府県フィルタの確認
-  console.log('City filter:', filters.value.city); // 市区町村フィルタの確認
-
+    const fetchRankedProducts = async () => {
   try {
     const response = await axios.get('http://localhost:3000/user_products', {
       params: {
         gender: filters.value.gender,
-        age_group: filters.value.ageGroup, // 年齢層フィルタを送信
+        age_group: filters.value.ageGroup,
         prefecture: filters.value.prefecture,
         city: filters.value.city
       }
     });
-    products.value = Array.isArray(response.data) ? response.data : response.data?.data;
-    console.log('Filtered products:', products.value); // フィルタリングされた商品をログに出力
-  } catch (error) {
-    console.error("There was an error fetching the products!", error);
-  }
-};
 
-const checkAgeGroup = (age, ageGroup) => {
-  switch (ageGroup) {
-    case 'teens':
-      return age >= 10 && age <= 19;
-    case 'twenties':
-      return age >= 20 && age <= 29;
-    case 'thirties':
-      return age >= 30 && age <= 39;
-    case 'forties':
-      return age >= 40 && age <= 49;
-    case 'fifties':
-      return age >= 50 && age <= 59;
-    case 'sixties_and_above':
-      return age >= 60;
-    default:
-      return true;
-  }
-};
+    console.log('Filtered API Response:', response.data);
 
-const filteredProducts = computed(() => {
-  return products.value.filter(product => {
-    return (
-      (!filters.value.gender || filters.value.gender === '全て' || product.gender === filters.value.gender) &&
-      (!filters.value.ageGroup || filters.value.ageGroup === '全て' || checkAgeGroup(product.age, filters.value.ageGroup)) &&
-      (!filters.value.prefecture || filters.value.prefecture === '全て' || product.prefecture.includes(filters.value.prefecture)) &&
-      (!filters.value.city || filters.value.city === '全て' || product.city.includes(filters.value.city))
-    );
-  });
-})
+    console.log('API Response:', response.data); // APIのレスポンスを確認
 
-    const filteredProductCounts = computed(() => {
-      const productCounts = {};
+    const weightedProductCounts = {};
 
-      filteredProducts.value.forEach(product => {
-        const name = product.product_name;
+    response.data.forEach(product => {
+      const name = product.product_name;
 
-        if (!productCounts[name]) {
-          productCounts[name] = {
-            name: product.product_name,
-            image_url: product.image_url,
-            item_url: product.item_url,
-            level1_count: 0,
-            level2_count: 0,
-            level3_count: 0
-          };
-        }
+      console.log(`Product: ${name}, Desire Level: ${product.desire_level}`); // Desire Levelの値を確認
 
-        // 欲しさレベルに応じてカウントを増加
-        if (product.desire_level === 1) {
-          productCounts[name].level1_count += 1;
-        } else if (product.desire_level === 2) {
-          productCounts[name].level2_count += 1;
-        } else if (product.desire_level === 3) {
-          productCounts[name].level3_count += 1;
-        }
-      });
 
-      return Object.values(productCounts).map(product => ({
-        ...product,
-        count: product.level1_count + product.level2_count + product.level3_count
-      })).sort((a, b) => b.count - a.count);
+      if (!weightedProductCounts[name]) {
+        weightedProductCounts[name] = {
+          name: product.product_name,
+          image_url: product.image_url,
+          item_url: product.item_url,
+          weighted_score: 0,
+          level1_count: 0,
+          level2_count: 0,
+          level3_count: 0
+        };
+      }
+
+
+      if (product.desire_level === 1) {
+        weightedProductCounts[name].weighted_score += 1;
+        weightedProductCounts[name].level1_count += 1;
+        console.log(`Incremented level1_count for ${name}`);
+      } else if (product.desire_level === 2) {
+        weightedProductCounts[name].weighted_score += 2;
+        weightedProductCounts[name].level2_count += 1;
+        console.log(`Incremented level2_count for ${name}`);
+      } else if (product.desire_level === 3) {
+        weightedProductCounts[name].weighted_score += 3;
+        weightedProductCounts[name].level3_count += 1;
+        console.log(`Incremented level3_count for ${name}`);
+      }
     });
 
-    const sortedProductCounts = computed(() => filteredProductCounts.value);
+    products.value = Object.values(weightedProductCounts).sort((a, b) => b.weighted_score - a.weighted_score);
 
-    const applyFilters = () => {
-  console.log('Applying filters with:', filters.value);
-  fetchProducts();  // フィルタを適用して再取得
+    console.log('Filtered Products after applying filters:', products.value);
+    console.log('Weighted and Filtered products:', products.value);
+
+  } catch (error) {
+    console.error("There was an error fetching the weighted products!", error);
+  }
 };
 
+
+    const sortedProductCounts = computed(() => products.value);
+
+    const applyFilters = () => {
+      console.log('Applying filters with:', filters.value);
+      fetchRankedProducts();  // フィルタを適用して再取得
+    };
+
     onMounted(() => {
-      fetchPrefectures();  // 都道府県データを取得
-      applyFilters();  // 初期状態でフィルタを適用
+      fetchPrefectures();
+      fetchRankedProducts();
     });
 
     return {
@@ -234,8 +209,9 @@ const filteredProducts = computed(() => {
     };
   }
 };
-
 </script>
+
+
 
 <style scoped>
 /* ナビゲーションバーのスタイル */
