@@ -2,23 +2,19 @@
     <Navigation />
     <div class="container">
         <div class="component3">
-            <Genre />
+            <Genre @genreSelected="updateGenreId" />
         </div>
 
         <div class="component1">
-            <Search />
+            <Search :genreId="selectedGenreId" />
         </div>
         <div class="component2">
             <Ranking />
         </div>
-
-
     </div>
-
 </template>
 
 <script>
-
 import Ranking from './Ranking.vue';
 import Search from './Search.vue';
 import Navigation from './Navigation.vue';
@@ -31,17 +27,24 @@ export default {
     Ranking,
     Navigation,
     Genre
+  },
+  data() {
+    return {
+      selectedGenreId: null
+    };
+  },
+  methods: {
+    updateGenreId(genreId) {
+      this.selectedGenreId = genreId;
+    }
   }
 }
-
 </script>
 
 <style scoped>
-
 .container {
     display: flex;
     width: 100%;
-    /* justify-content: space-between; コンポーネント間に均等なスペースを配置する */
 }
 
 .component1 {
@@ -54,5 +57,4 @@ export default {
 .component3 {
     width: 10%;
 }
-
 </style>

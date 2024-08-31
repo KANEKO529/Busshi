@@ -1,29 +1,41 @@
 <template>
   <div>
     <div class="search-bar">
-        <input v-model="keyword" placeholder="keyword" />
-        <button @click="searchProducts"><img src="@/assets/symbol064.png" alt="AppName" class="search" /></button>
-      </div>
-
-    <div>
-  
+      <input v-model="keyword" placeholder="keyword" />
+      <button @click="searchByKeyword"><img src="@/assets/symbol064.png" alt="AppName" class="search" /></button>
     </div>
-
-
 
     <ul v-if="products.length > 0" class="product-list">
       <li v-for="product in products" :key="product.itemCode" class="product-item">
-        <img :src="product.mediumImageUrls[0]" alt="商品画像" class="product-image" />
-        <p>{{ product.itemName }}</p>
-        <p>Price: {{ product.itemPrice }} yen</p>
-          <p>Review: {{ product.reviewAverage }}/5</p>
-          <a :href="product.itemUrl" target="_blank">To Product Page</a>
-
-        <div class="desire-level-buttons">
-          <button @click="saveDesireLevel(product, 3)" class="desire-button">Must Have!!</button>
-          <button @click="saveDesireLevel(product, 2)" class="desire-button">Would Like</button>
-          <button @click="saveDesireLevel(product, 1)" class="desire-button">Nice to Have</button>
+        <!-- 画像が存在する場合、そのURLを表示、存在しない場合デフォルト画像を表示 -->
+        
+        <div>
+          <img :src="productImageUrl(product.mediumImageUrls[0])" alt="商品画像" class="product-image" />
         </div>
+
+        <div>
+          <div>
+            <p>{{ product.itemName }}</p>
+          </div>
+          <div>
+            <div>
+              <p>Price: {{ product.itemPrice }} yen</p>
+            </div>
+            <div>
+              <p>Review: {{ product.reviewAverage }}/5</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="desire-level-buttons">
+            <button @click="saveDesireLevel(product, 3)" class="desire-button">Must Have!!</button>
+            <button @click="saveDesireLevel(product, 2)" class="desire-button">Would Like</button>
+            <button @click="saveDesireLevel(product, 1)" class="desire-button">Nice to Have</button>
+          </div>
+          <a :href="product.itemUrl" target="_blank">To Product Page</a>
+        </div>
+
       </li>
     </ul>
   </div>
@@ -31,50 +43,59 @@
 
 <script>
 import axios from 'axios';
-import { mapGetters } from 'vuex';//mapgetters用
+import { mapGetters } from 'vuex'; // mapGetters用
+import defaultImage from '@/assets/default-image.png'; // デフォルト画像をインポート
 
 export default {
   data() {
     return {
       keyword: '',
-      products: []//配列
+      genreId: null,
+      products: [] // 商品リスト
     };
   },
   computed: {
     ...mapGetters(['isAuthenticated', 'currentUser'])
   },
+  watch: {
+    // URLのクエリパラメータが変わったときに検索を行う
+    '$route.query.genreId': function (newGenreId) {
+      this.genreId = newGenreId;
+      this.searchProducts();
+    }
+  },
   mounted() {
-    console.log('現在のユーザー:', this.currentUser); // ユーザー情報が正しく表示されるはずです
-    console.log('認証状態:', this.isAuthenticated); // 認証状態が正しいか確認
+    // URLのクエリパラメータからgenreIdを取得する
+    this.genreId = this.$route.query.genreId;
+    if (this.genreId) {
+      this.searchProducts();
+    }
   },
   methods: {
+    productImageUrl(imageUrl) {
+      // URLが存在するかを確認する（ここで非同期処理は行えないため、単純にURLの有無を確認）
+      return imageUrl || defaultImage;
+    },
     async searchProducts() {
       try {
         const response = await axios.get('http://localhost:3000/products/search', {
           params: {
-            keyword: this.keyword
+            genreId: this.genreId,
+            keyword: this.keyword || undefined // キーワードがあれば追加、なければ無視
           }
         });
-        console.log(response.data);  // レスポンスを確認
         this.products = response.data;
       } catch (error) {
         console.error('APIリクエストに失敗しました:', error);
       }
     },
 
-    logout() {
-      this.$store.dispatch('logout');
-      this.$router.push('/');
-    }
-    
-    
-    
-    ,
+    async searchByKeyword() {
+      this.genreId = null; // ジャンルIDをリセット
+      this.searchProducts();
+    },
 
     async saveDesireLevel(product, level) {
-      console.log('現在のユーザー:', this.currentUser); // 追加：ユーザー情報をログに表示
-      console.log('保存する商品データ:', product); // 商品データをログに表示 productは引数。
-
       if (!this.currentUser) {
         console.error('ユーザーがログインしていません。');
         return;
@@ -97,13 +118,12 @@ export default {
           }
         });
 
-        console.log('欲しいBusshiが保存されました:', response.data);
         alert('欲しいBusshiが保存されました');
       } catch (error) {
         console.error('Error saving desire level:', error.response ? error.response.data : error.message);
         alert('データ保存に失敗しました');
+      }
     }
-}
   }
 };
 </script>
@@ -197,6 +217,7 @@ nav {
   display: flex;
   align-items: center;
   margin-right: 10px;
+  padding-left: 20px;
 }
 
 .search-bar input {
@@ -237,7 +258,7 @@ li.product-item {
 }
 
 .product-image {
-  max-width: 100%;
+  max-width: 128px;
   margin-bottom: 10px;
 }
 
@@ -277,7 +298,7 @@ ul.product-list {
   list-style-type: none;
   padding: 0;
   margin: 0 auto;
-  max-width: 80%;
+  max-width: 90%;
   padding-top: 20px;
 }
 
@@ -295,6 +316,7 @@ li.product-item {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 15px;
+  height: 150px;
 }
 
 ul.product-list.grid-view {

@@ -1,8 +1,17 @@
 class ProductsController < ApplicationController
   def search
-    # genre_id = params[:genreId]
-    items = RakutenWebService::Ichiba::Item.search(keyword: params[:keyword], hits: 10)
+    keyword = params[:keyword]
+    genre_id = params[:genreId]
 
+    # リクエストのパラメータに応じて、Rakuten API に渡すオプションを決定します
+    search_options = { hits: 30 }
+    search_options[:keyword] = keyword if keyword.present?
+    search_options[:genreId] = genre_id if genre_id.present?
+
+    # Rakuten API から商品を検索
+    items = RakutenWebService::Ichiba::Item.search(search_options)
+
+    # 検索結果を整形
     result = items.map do |item|
       genre = RakutenWebService::Ichiba::Genre[item['genreId']] rescue nil
 

@@ -9,11 +9,11 @@ import Search from '@/components/Search.vue';
 import Navigation from '@/components/Navigation.vue';
 
 const routes = [
-  { path: '/', component: Home },
+  { path: '/',name: 'home', component: Home },
   { path: '/signup', component: SignUp },
   { path: '/signin', component: SignIn },
   { path: '/signup/success', component: SignupSuccess },
-  // { path: '/search', component: Search}
+  // { path: '/search',  name: 'home',component: Search}
 ];
 
 const router = createRouter({
