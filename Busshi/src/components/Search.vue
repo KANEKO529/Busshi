@@ -9,31 +9,75 @@
       <li v-for="product in products" :key="product.itemCode" class="product-item">
         <!-- 画像が存在する場合、そのURLを表示、存在しない場合デフォルト画像を表示 -->
         
-        <div>
+        <div class="container-left">
           <img :src="productImageUrl(product.mediumImageUrls[0])" alt="商品画像" class="product-image" />
         </div>
 
-        <div>
-          <div>
+        <div class="container-center">
+          <div class="item-name">
             <p>{{ product.itemName }}</p>
           </div>
-          <div>
-            <div>
-              <p>Price: {{ product.itemPrice }} yen</p>
+          <div class="item-info">
+            <div class="item-review">
+              <p v-if="product.reviewAverage == 5.0">
+                <img src="@/assets/star5.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>
+              <p v-else-if="product.reviewAverage >= 4.5 && product.reviewAverage < 5.0">
+                <img src="@/assets/star4half.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>
+              <p v-else-if="product.reviewAverage >= 4.0 && product.reviewAverage < 4.5">
+                <img src="@/assets/star4.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>
+              <p v-else-if="product.reviewAverage >= 3.5 && product.reviewAverage < 4.0">
+                <img src="@/assets/star3half.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>              
+              <p v-else-if="product.reviewAverage >= 3.0 && product.reviewAverage < 3.5">
+                <img src="@/assets/star3.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>              
+              <p v-else-if="product.reviewAverage >= 2.5 && product.reviewAverage < 3.0">
+                <img src="@/assets/star2half.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>              
+              <p v-else-if="product.reviewAverage >= 2.0 && product.reviewAverage < 2.5">
+                <img src="@/assets/star2.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>
+              <p v-else-if="product.reviewAverage >= 1.5 && product.reviewAverage < 2.0">
+                <img src="@/assets/star1half.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>
+              <p v-else-if="product.reviewAverage >= 1.0 && product.reviewAverage < 1.5">
+                <img src="@/assets/star1.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>
+              <p v-else-if="product.reviewAverage >= 0.5 && product.reviewAverage < 1.0">
+                <img src="@/assets/star0half.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>
+              <p v-else-if="product.reviewAverage >= 0.0 && product.reviewAverage < 0.5">
+                <img src="@/assets/0.jpg" alt="AppName" class="review-logo" />
+                ({{ product.reviewAverage }})
+              </p>
             </div>
-            <div>
-              <p>Review: {{ product.reviewAverage }}/5</p>
+            <div class="item-price">
+              <p><span class="font-size">{{ product.itemPrice.toLocaleString() }} </span> yen</p>
             </div>
+
           </div>
         </div>
 
-        <div>
+        <div  class="container-right">
           <div class="desire-level-buttons">
-            <button @click="saveDesireLevel(product, 3)" class="desire-button">Must Have!!</button>
-            <button @click="saveDesireLevel(product, 2)" class="desire-button">Would Like</button>
-            <button @click="saveDesireLevel(product, 1)" class="desire-button">Nice to Have</button>
+            <button @click="saveDesireLevel(product, 3)" class="desire-button">Must</button>
+            <button @click="saveDesireLevel(product, 2)" class="desire-button">Want</button>
+            <button @click="saveDesireLevel(product, 1)" class="desire-button">Wish</button>
           </div>
-          <a :href="product.itemUrl" target="_blank">To Product Page</a>
+          <a :href="product.itemUrl" target="_blank">View</a>
         </div>
 
       </li>
@@ -249,17 +293,57 @@ ul.product-list {
   max-width: 80%;
 }
 
-li.product-item {
-  margin-bottom: 20px;
-  background-color: hsl(33, 100%, 96%);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-}
 
 .product-image {
   max-width: 128px;
   margin-bottom: 10px;
+}
+
+.container-left {
+  width: 128px;
+}
+
+.container-center {
+  padding-left: 10px;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  width: 100%;
+  height: 70%
+}
+
+.item-info {
+  display: flex;
+  height: 30%;
+}
+
+.item-price {
+
+  width: 50%;
+  text-align: right;
+  padding-right: 20px;
+}
+
+.font-size {
+  font-size: 30px;
+  color: red;
+}
+
+.item-review {
+  width: 50%;
+}
+
+.review-logo {
+  padding-top: 0px;
+  max-width: 100px;
+}
+
+.container-right {
+  width: 10%;
+  
 }
 
 .desire-level-buttons {
@@ -308,15 +392,24 @@ ul.product-list2 {
   margin: 0 auto;
   max-width: 95%;
 }
+/* 
+li.product-item {
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(197, 145, 145, 0.1);
+  padding: 15px;
 
+} */
 
 li.product-item {
   margin-bottom: 20px;
-  background-color: hsl(33, 100%, 96%);
+  background-color: hsl(0, 0%, 100%);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   padding: 15px;
-  height: 150px;
+  height: 160px;
+  display: flex;
 }
 
 ul.product-list.grid-view {

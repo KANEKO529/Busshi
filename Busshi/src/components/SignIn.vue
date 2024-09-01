@@ -22,7 +22,7 @@
           <input type="password" id="password" v-model="password"
         </div>
         <button type="submit" class="signin-button">Sign in</button>
-        <p>アカウントをお持ちでない方は<router-link to="/signup">こちら</router-link></p>
+        <p>Don't have an account?<router-link to="/signup">here</router-link></p>
       </form>
     </div>
   </div>
@@ -103,7 +103,7 @@ export default {
 .signin-container {
 
   max-width: 100%;
-  width: 100%;
+  width: 30%;
   padding: 20px;
   background-color: hsl(33, 100%, 96%);
   border-radius: 10px;

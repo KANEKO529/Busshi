@@ -164,7 +164,7 @@ export default {
 
 /* フォームのコンテナ */
 .register-container {
-  width: 100%;
+  width: 30%;
   padding: 20px;
   background-color: hsl(34, 100%, 94%);
   border-radius: 10px;

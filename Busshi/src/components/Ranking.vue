@@ -245,7 +245,7 @@ export default {
 
 .product-item {
   padding: 15px;
-  background-color: hsl(33, 100%, 96%);
+  background-color: hsl(36, 100%, 99%);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
